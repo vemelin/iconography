@@ -29,8 +29,9 @@ export default async function handler(req, res) {
 
     const { filename, buffer } = formData.file;
 
-    // Use environment variable directly
+    // Use BOTH token AND access: 'public'
     const blob = await put(filename, buffer, {
+      access: 'public',
       token: process.env.BLOB_READ_WRITE_TOKEN,
     });
 
