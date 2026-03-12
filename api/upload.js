@@ -1,4 +1,5 @@
 import { put } from '@vercel/blob';
+import Busboy from 'busboy';
 
 export const config = {
   api: {
@@ -7,7 +8,6 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -20,11 +20,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Check if Blob storage is connected
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return res.status(500).json({ 
-      error: 'Blob storage not connected',
-      message: 'Please connect blob_uploader storage in Vercel Dashboard → Storage → Connect to Project'
+      error: 'Blob storage not connected'
     });
   }
 
@@ -35,7 +33,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Content-Type must be multipart/form-data' });
     }
 
-    // Parse form data
     const formData = await parseMultipartForm(req);
     
     if (!formData.file) {
@@ -44,13 +41,12 @@ export default async function handler(req, res) {
 
     const { filename, buffer } = formData.file;
 
-    // Upload to Vercel Blob (blob_uploader)
     const blob = await put(filename, buffer, {
       access: 'public',
     });
 
     return res.status(200).json({
-      message: 'File uploaded successfully to blob_uploader',
+      message: 'File uploaded successfully',
       url: blob.url,
       filename: filename,
     });
@@ -59,15 +55,15 @@ export default async function handler(req, res) {
     console.error('Upload error:', error);
     return res.status(500).json({ 
       error: 'Upload failed', 
-      details: error.message 
+      details: error.message
     });
   }
 }
 
-// Helper function to parse multipart form data
 async function parseMultipartForm(req) {
   return new Promise((resolve, reject) => {
-    const Busboy = require('busboy');
+    // Changed from: const Busboy = require('busboy');
+    // To: use the imported Busboy directly
     const busboy = Busboy({ headers: req.headers });
     const result = {};
 
