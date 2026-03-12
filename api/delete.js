@@ -1,6 +1,4 @@
-const { del } = require('@vercel/blob');
-
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'DELETE, OPTIONS');
@@ -14,6 +12,14 @@ module.exports = async (req, res) => {
   }
 
   try {
+    // Check if Blob is configured
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      return res.status(500).json({ 
+        error: 'Vercel Blob Storage not configured' 
+      });
+    }
+
+    const { del } = await import('@vercel/blob');
     const url = req.query.url;
     
     if (!url) {
@@ -25,6 +31,6 @@ module.exports = async (req, res) => {
     res.status(200).json({ message: 'File deleted successfully' });
   } catch (error) {
     console.error('Delete error:', error);
-    res.status(500).json({ error: 'Failed to delete file' });
+    res.status(500).json({ error: 'Failed to delete file: ' + error.message });
   }
-};
+}
