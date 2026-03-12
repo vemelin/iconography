@@ -41,13 +41,14 @@ export default async function handler(req, res) {
 
     const { filename, buffer } = formData.file;
 
-    const blob = await put(filename, buffer, {
-      access: 'private',
+    // Simplified - no access parameter at all
+    const { url } = await put(filename, buffer, {
+      addRandomSuffix: true
     });
 
     return res.status(200).json({
       message: 'File uploaded successfully',
-      url: blob.url,
+      url: url,
       filename: filename,
     });
 
@@ -55,15 +56,14 @@ export default async function handler(req, res) {
     console.error('Upload error:', error);
     return res.status(500).json({ 
       error: 'Upload failed', 
-      details: error.message
+      details: error.message,
+      errorName: error.name
     });
   }
 }
 
 async function parseMultipartForm(req) {
   return new Promise((resolve, reject) => {
-    // Changed from: const Busboy = require('busboy');
-    // To: use the imported Busboy directly
     const busboy = Busboy({ headers: req.headers });
     const result = {};
 
