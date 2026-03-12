@@ -42,7 +42,7 @@ export default async function handler(req, res) {
     const { filename, buffer } = formData.file;
 
     const blob = await put(filename, buffer, {
-      access: 'public',
+      access: 'private',
     });
 
     return res.status(200).json({
