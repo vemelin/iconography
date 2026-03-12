@@ -1,5 +1,4 @@
 import { put } from '@vercel/blob';
-import { Readable } from 'stream';
 
 export const config = {
   api: {
@@ -21,6 +20,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Check if Blob storage is connected
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return res.status(500).json({ 
+      error: 'Blob storage not connected',
+      message: 'Please connect blob_uploader storage in Vercel Dashboard → Storage → Connect to Project'
+    });
+  }
+
   try {
     const contentType = req.headers['content-type'] || '';
     
@@ -37,13 +44,13 @@ export default async function handler(req, res) {
 
     const { filename, buffer } = formData.file;
 
-    // Upload to Vercel Blob
+    // Upload to Vercel Blob (blob_uploader)
     const blob = await put(filename, buffer, {
       access: 'public',
     });
 
     return res.status(200).json({
-      message: 'File uploaded successfully',
+      message: 'File uploaded successfully to blob_uploader',
       url: blob.url,
       filename: filename,
     });

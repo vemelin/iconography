@@ -12,6 +12,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Check if Blob storage is connected
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return res.status(200).json([]);
+  }
+
   try {
     const response = await list();
     
@@ -26,7 +31,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('List error:', error);
     return res.status(500).json({ 
-      error: 'Failed to list files',
+      error: 'Failed to list files from blob_uploader',
       details: error.message 
     });
   }
