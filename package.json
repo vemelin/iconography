@@ -1,7 +1,7 @@
 {
   "name": "file-upload-vercel",
   "version": "1.0.0",
-  "description": "File upload app for Vercel",
+  "description": "File upload app for Vercel with blob_uploader storage",
   "type": "module",
   "scripts": {
     "dev": "vercel dev"
