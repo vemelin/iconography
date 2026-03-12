@@ -1,11 +1,30 @@
-import fs from "fs";
-import path from "path";
+const { del } = require('@vercel/blob');
 
-export default function handler(req, res) {
-  const file = req.query.file;
-  const filepath = path.join(process.cwd(), "uploads", file);
+module.exports = async (req, res) => {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'DELETE, OPTIONS');
 
-  if (!fs.existsSync(filepath)) return res.status(404).json({ error: "Not found" });
-  fs.unlinkSync(filepath);
-  res.json({ status: "deleted" });
-}
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'DELETE') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const url = req.query.url;
+    
+    if (!url) {
+      return res.status(400).json({ error: 'URL parameter required' });
+    }
+
+    await del(url);
+    
+    res.status(200).json({ message: 'File deleted successfully' });
+  } catch (error) {
+    console.error('Delete error:', error);
+    res.status(500).json({ error: 'Failed to delete file' });
+  }
+};

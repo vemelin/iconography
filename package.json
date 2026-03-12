@@ -1,20 +1,19 @@
 {
-  "name": "file-upload-app",
+  "name": "file-upload-vercel",
   "version": "1.0.0",
-  "description": "Local file upload web application",
-  "main": "server.js",
+  "description": "File upload app for Vercel",
+  "main": "api/index.js",
   "scripts": {
-    "start": "node server.js"
+    "dev": "vercel dev",
+    "deploy": "vercel"
   },
-  "keywords": [
-    "file-upload",
-    "express",
-    "multer"
-  ],
+  "keywords": ["file-upload", "vercel", "blob-storage"],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.22.1",
-    "multer": "^1.4.5-lts.1"
+    "@vercel/blob": "^0.15.1"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
   }
 }

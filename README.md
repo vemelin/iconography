@@ -1,68 +1,68 @@
-# Local File Upload App 🚀
+# File Upload App for Vercel ☁️
 
-A simple web application that runs on your computer for uploading and managing files.
+A serverless file upload application that runs on Vercel with cloud storage.
 
-## 📋 Installation Instructions
+## 🚀 Quick Deploy to Vercel
 
-### 1. Install Node.js
-If you don't have Node.js installed, download it from: https://nodejs.org/
-(Download the LTS version)
+### Deploy with Vercel CLI
 
-### 2. Set Up the App
-
-1. Create a new folder for the app (e.g., `file-upload-app`)
-2. Save `server.js` and `package.json` in that folder
-3. Open Terminal (Mac/Linux) or Command Prompt (Windows)
-4. Navigate to the folder:
+1. **Install Vercel CLI**
 ```bash
-   cd path/to/file-upload-app
+   npm install -g vercel
 ```
 
-### 3. Install Dependencies
-
-Run this command:
+2. **Navigate to the project folder**
 ```bash
-npm install
+   cd file-upload-vercel
 ```
 
-### 4. Start the Server
-
-Run this command:
+3. **Install dependencies**
 ```bash
-npm start
+   npm install
 ```
 
-You should see:
-```
-🚀 File Upload App Running!
-📍 URL: http://localhost:3000
+4. **Login to Vercel**
+```bash
+   vercel login
 ```
 
-### 5. Use the App
+5. **Deploy**
+```bash
+   vercel
+```
 
-Open your web browser and go to: **http://localhost:3000**
+6. **Enable Vercel Blob Storage**
+   - Go to https://vercel.com/dashboard
+   - Select your project
+   - Go to "Storage" tab
+   - Click "Create Database"
+   - Select "Blob"
+   - Click "Create"
+
+7. **Deploy to production**
+```bash
+   vercel --prod
+```
 
 ## ✨ Features
 
-- ✅ Upload any type of file
-- ✅ View all uploaded files
+- ✅ Upload files to Vercel Blob Storage
+- ✅ List all uploaded files
 - ✅ Download files
 - ✅ Delete files
-- ✅ Files saved to `uploads` folder in the app directory
+- ✅ Serverless - no server management
+- ✅ Automatic scaling
+- ✅ Fast global CDN
 
-## 🛑 To Stop the Server
+## 🔧 Local Development
+```bash
+npm install
+vercel dev
+```
 
-Press `Ctrl+C` in the terminal
+Then open http://localhost:3000
 
-## 📁 Where Are Files Saved?
+## 📚 Resources
 
-Files are saved in the `uploads` folder inside your app directory.
-
-## 🔧 Troubleshooting
-
-**Port 3000 already in use?**
-- Edit `server.js` and change `const PORT = 3000;` to another number (e.g., 3001)
-
-**Can't access the app?**
-- Make sure the server is running (you should see the startup message)
-- Try http://127.0.0.1:3000 instead# iconography
+- [Vercel Blob Documentation](https://vercel.com/docs/storage/vercel-blob)
+- [Vercel CLI Documentation](https://vercel.com/docs/cli)
