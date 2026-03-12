@@ -1,12 +1,6 @@
 import { put } from '@vercel/blob';
 import Busboy from 'busboy';
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -18,12 +12,6 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return res.status(500).json({ 
-      error: 'Blob storage not connected'
-    });
   }
 
   try {
@@ -41,14 +29,14 @@ export default async function handler(req, res) {
 
     const { filename, buffer } = formData.file;
 
-    // Simplified - no access parameter at all
-    const { url } = await put(filename, buffer, {
-      addRandomSuffix: true
+    // Use environment variable directly
+    const blob = await put(filename, buffer, {
+      token: process.env.BLOB_READ_WRITE_TOKEN,
     });
 
     return res.status(200).json({
       message: 'File uploaded successfully',
-      url: url,
+      url: blob.url,
       filename: filename,
     });
 
@@ -56,8 +44,7 @@ export default async function handler(req, res) {
     console.error('Upload error:', error);
     return res.status(500).json({ 
       error: 'Upload failed', 
-      details: error.message,
-      errorName: error.name
+      details: error.message
     });
   }
 }
@@ -68,30 +55,20 @@ async function parseMultipartForm(req) {
     const result = {};
 
     busboy.on('file', (fieldname, file, info) => {
-      const { filename, encoding, mimeType } = info;
+      const { filename } = info;
       const chunks = [];
 
-      file.on('data', (chunk) => {
-        chunks.push(chunk);
-      });
-
+      file.on('data', (chunk) => chunks.push(chunk));
       file.on('end', () => {
         result.file = {
           filename,
           buffer: Buffer.concat(chunks),
-          encoding,
-          mimeType,
         };
       });
     });
 
-    busboy.on('finish', () => {
-      resolve(result);
-    });
-
-    busboy.on('error', (error) => {
-      reject(error);
-    });
+    busboy.on('finish', () => resolve(result));
+    busboy.on('error', reject);
 
     req.pipe(busboy);
   });
