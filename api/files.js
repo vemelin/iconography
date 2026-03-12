@@ -1,7 +1,6 @@
-const { list } = require('@vercel/blob');
+import { list } from '@vercel/blob';
 
-module.exports = async (req, res) => {
-  // Enable CORS
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
 
@@ -14,18 +13,21 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { blobs } = await list();
+    const response = await list();
     
-    const files = blobs.map(blob => ({
+    const files = response.blobs.map((blob) => ({
       filename: blob.pathname,
       url: blob.url,
       size: blob.size,
-      uploadedAt: blob.uploadedAt
+      uploadedAt: blob.uploadedAt,
     }));
 
-    res.status(200).json(files);
+    return res.status(200).json(files);
   } catch (error) {
     console.error('List error:', error);
-    res.status(500).json({ error: 'Failed to list files' });
+    return res.status(500).json({ 
+      error: 'Failed to list files',
+      details: error.message 
+    });
   }
-};
+}
